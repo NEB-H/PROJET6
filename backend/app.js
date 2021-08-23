@@ -8,6 +8,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 //recuperer route user
 const userRoutes = require('./routes/user');
+//recuperer route sauces
+const saucesRoutes = require('./routes/sauces');
+//Chemin
+const path = require('path');
 
 //Connection a la BDD 
 mongoose.connect('mongodb+srv://Mohammedeereterte:ZjmyxF6yCSf7C4B@cluster0.6myqr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
@@ -25,9 +29,17 @@ app.use((req, res, next) => {
  //Utiliser bodyparser pour transformer des requete de json a objet java script 
 app.use(bodyParser.json())
 
+//middleware pour repondre au requete envoyer a images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //utilisation router user
 app.use('/api/auth', userRoutes);
+
+
+//utilisation router sauces
+app.use('/api/sauces', saucesRoutes);
+
+
 
 
 

@@ -9,10 +9,10 @@ const saucesSchema = mongoose.Schema({
     imageUrl: { type: String, required: true },
     heat: { type: Number, required: true },
     likes: { type: Number, required: true },
-    dislikes: { type: Number, required: true },
-    //userLiked:{ type: :Array [ "String <userId>" ], required: true },
-    //userLiked:{ type: :Array [ "String <userId>" ], required: true },
-
+    dislikes: { type: Number, required: true},
+    usersLiked: { type: [String], required: true },
+    usersDisliked: { type: [String], required: true},
+    
 });
 
 //Export pour utiliser depuis d'autres fichiers
