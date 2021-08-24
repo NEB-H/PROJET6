@@ -31,7 +31,7 @@ exports.getOneSauces =  (req, res, next) => {
   };
 
 exports.modifySauces =(req, res, next) => {
-    const thingObject = req.file ?
+    const saucesObject = req.file ?
 	//si on a une image a modifier
     {
         ...JSON.parse(req.body.sauce),
@@ -40,7 +40,7 @@ exports.modifySauces =(req, res, next) => {
 	    //si pas d’image 
     } : { ...req.body };
 
-    Sauces.updateOne({ _id: req.params.id }, { ...thingObject, _id: req.params.id })
+    Sauces.updateOne({ _id: req.params.id }, { ...saucesObject, _id: req.params.id })
       .then(() => res.status(200).json({ message: 'Objet modifié !'}))
       .catch(error => res.status(400).json({ error }));
 };
@@ -62,4 +62,21 @@ exports.delete = (req, res, next) => {
       .catch(error => res.status(500).json({ error }));
      
         
+};
+
+exports.likes = (req, res, next) => {
+    
+    
+    const useIid =req.body.userId;
+    //si like = 1
+    if (req.body.like == 1){res.status(201).json({message: 'liked !'});
+    }
+
+    else {
+        //si disliked =1
+        if (req.body.like == -1){res.status(201).json({message: 'disliked !'});}
+        //si like = 0 
+        else  {res.status(201).json({message: 'pas avis !'});}
+    }
+ 
 };
