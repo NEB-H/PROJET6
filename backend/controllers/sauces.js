@@ -1,6 +1,7 @@
 const Sauces = require('../models/Sauces');
 //Recuperation du package fs de node
 const fs = require('fs');
+const { findOneAndUpdate, update, updateOne } = require('../models/Sauces');
 
 //export fonction creating qui creer un objet
 exports.createSauces = (req, res, next) => {
@@ -65,11 +66,17 @@ exports.delete = (req, res, next) => {
 };
 
 exports.likes = (req, res, next) => {
+
     
-    
-    const useIid =req.body.userId;
+    //recuperer id client anvoye par front
+    const userId =req.body.userId;
     //si like = 1
     if (req.body.like == 1){res.status(201).json({message: 'liked !'});
+    //update avis user
+    Sauces.updateOne({_id: req.params.id}, {$push: { usersLiked : userId }})
+
+    //update nombre de like dansableau liked    
+        
     }
 
     else {
