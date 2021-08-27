@@ -8,17 +8,12 @@ const ctrl = require('../controllers/sauces')
 //recuperer auth
 const auth = require('../middleware/auth');
 //Import du middleware multer
-const multer = require('../middleware/multer-config')
+const multer = require('../middleware/multer-config');
 
                                     //CRUD//
 
 //GET READ
-router.get('/',auth, (req, res, next) => {
-    Sauces.find()
-      .then(sauce => res.status(200).json(sauce))
-      .catch(error => res.status(400).json({ error }));
-  });
-
+router.get('/',auth, ctrl.getAllSauces);
 //POST CREATE
 router.post('/',auth,multer, ctrl.createSauces);
 
@@ -31,7 +26,7 @@ router.put('/:id', auth, multer, ctrl.modifySauces );
 //DELETE
 router.delete('/:id', auth, ctrl.delete);
 
-// PUT pour modifier les likes
+// POST pour modifier les likes
 router.post('/:id/like', auth,ctrl.likes );
 
 //Export

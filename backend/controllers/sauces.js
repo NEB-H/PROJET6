@@ -1,12 +1,19 @@
 const Sauces = require('../models/Sauces');
 //Recuperation du package fs de node
 const fs = require('fs');
-const { findOneAndUpdate, update, updateOne } = require('../models/Sauces');
+
+//export recuperation des sauces
+exports.getAllSauces = (req, res, next) => {
+  Sauces.find()
+    .then(sauce => res.status(200).json(sauce))
+    .catch(error => res.status(400).json({ error }));
+};
 
 //export fonction creating qui creer un objet
 exports.createSauces = (req, res, next) => {
-
+    //parse de lobjet recupere car l ajout d image modifie le format de la requete 
     const saucesObject = JSON.parse(req.body.sauce);
+    //enleve l id genere par le front car se n 'ai pas le bon il doit etre genere par mongo
     delete saucesObject._id;
     const sauces = new Sauces({
         ...saucesObject, 
@@ -24,6 +31,8 @@ exports.createSauces = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
   
   };
+  
+
 
 exports.getOneSauces =  (req, res, next) => {
     Sauces.findOne({ _id: req.params.id })
@@ -68,13 +77,13 @@ exports.delete = (req, res, next) => {
 exports.likes = (req, res, next) => {
 
     
-    //recuperer id client anvoye par front
+    //recuperer id client envoye par front
     const userId =req.body.userId;
     //si like = 1
-    if (req.body.like == 1){res.status(201).json({message: 'liked !'});
+    if (req.body.like == 1){
     //update avis user
     Sauces.updateOne({_id: req.params.id}, {$push: { usersLiked : userId }})
-
+    .then(()=> res.status(201).json({message: 'liked !'}));
     //update nombre de like dansableau liked    
         
     }
@@ -82,8 +91,8 @@ exports.likes = (req, res, next) => {
     else {
         //si disliked =1
         if (req.body.like == -1){res.status(201).json({message: 'disliked !'});}
-        //si like = 0 
+        //si like = 0  il faudrat enlever l id user de userliked et userDisliked 
         else  {res.status(201).json({message: 'pas avis !'});}
     }
- 
+    //recuperer length de userLiked puis mettre dans like et length.userdisliked et le mettre dans 
 };
