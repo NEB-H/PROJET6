@@ -22,8 +22,8 @@ exports.createSauces = (req, res, next) => {
         //Config likes dislikes
         likes: 0,
         dislikes: 0,
-        usersLiked: [' '],
-        usersdisLiked: [' '],
+        usersLiked: [],
+        usersdisLiked: [],
     });
     //enregistrement de l’objet dans la BDD
       sauces.save()
@@ -79,20 +79,47 @@ exports.likes = (req, res, next) => {
     
     //recuperer id client envoye par front
     const userId =req.body.userId;
+    
     //si like = 1
     if (req.body.like == 1){
-    //update avis user
-    Sauces.updateOne({_id: req.params.id}, {$push: { usersLiked : userId }})
-    .then(()=> res.status(201).json({message: 'liked !'}));
-    //update nombre de like dansableau liked    
+    //Ajouter le userID  au tableau userLiked +1like
+    Sauces.updateOne({_id: req.params.id}, {$push: { usersLiked : userId },$inc: { likes: +1 }})
+    .then(()=> res.status(201).json({message: 'liked !'}))
+    .catch(error => res.status(400).json({ error }));      
         
     }
 
     else {
         //si disliked =1
-        if (req.body.like == -1){res.status(201).json({message: 'disliked !'});}
+        if (req.body.like == -1){
+          //Ajouter le userID  au tableau userDisliked
+          Sauces.updateOne({_id: req.params.id}, {$push: { usersDisliked : userId },$inc: { dislikes: +1 }})
+          .then(()=> res.status(201).json({message: 'Disliked !'}))
+          .catch(error => res.status(400).json({ error }));      
+        
+        }
         //si like = 0  il faudrat enlever l id user de userliked et userDisliked 
-        else  {res.status(201).json({message: 'pas avis !'});}
+        else {
+          //rechercher la sauce 
+          Sauces.findOne({ _id: req.params.id})
+          .then((sauce) =>{
+            //Si le user est dans  usersliked 
+            if(sauce.usersLiked.includes(userId)){
+                  //Retirer le userID  au tableau userLiked - 1 likes
+              Sauces.updateOne({_id: req.params.id}, {$pull: { usersLiked : userId }, $inc: {likes : -1 }})
+              .then(()=> res.status(201).json({message: 'not liked anymore!'}))
+              .catch(error => res.status(400).json({ error }));                   
+            }
+            //Si le user est dans  usersliked
+            if(sauce.usersDisliked.includes(userId)){
+              //Retirer le userID  au tableau userLiked -1 dislikes
+              Sauces.updateOne({_id: req.params.id}, {$pull: { usersDisliked : userId }, $inc: {dislikes : -1 }})
+              .then(()=> res.status(201).json({message: 'not disliked anymore!'}))
+              .catch(error => res.status(400).json({ error }));                   
+        }
+          
+          })
+
+        }
     }
-    //recuperer length de userLiked puis mettre dans like et length.userdisliked et le mettre dans 
 };
